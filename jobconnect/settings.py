@@ -35,6 +35,7 @@ DEFAULT_ALLOWED_HOSTS = [
     '[::1]',
     '0.0.0.0',
     '10.222.243.41',
+    'Ai-jobs-platform.onrender.com',
 ]
 
 env_allowed_hosts = os.environ.get('ALLOWED_HOSTS', '')
