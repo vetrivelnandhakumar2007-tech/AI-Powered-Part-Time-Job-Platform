@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Your Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-6">
+    <h2 class="section-title">Your Student Profile</h2>
+
+    {% if tips %}
+    <div class="mb-4">
+        <p class="small fw-semibold mb-2">✨ AI tips to strengthen your profile</p>
+        {% for tip in tips %}
+        <div class="ai-tip-box">{{ tip }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="form-spacious">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">Save Profile</button>
+    </form>
+</div>
+</div>
+{% endblock %}

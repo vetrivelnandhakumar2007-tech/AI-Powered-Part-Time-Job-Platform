@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About — {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+
+<div class="row align-items-center g-5 mb-5">
+    <div class="col-md-6 fade-in-up">
+        <div class="hero-eyebrow" style="color:var(--amber-dark);">Our mission</div>
+        <h1 class="mb-3">{{ site_settings.about_mission_title }}</h1>
+        <p class="text-muted fs-5">{{ site_settings.about_mission_text }}</p>
+    </div>
+    <div class="col-md-6 fade-in-up">
+        <img src="{% static 'img/about-illustration.svg' %}" alt="Students and owners connecting" class="img-fluid" style="max-height:320px;">
+    </div>
+</div>
+
+<div class="admin-stat-grid mb-5">
+    <div class="admin-stat-card fade-in-up">
+        <div class="num">{{ stats.owners }}</div>
+        <div class="label">Local Businesses</div>
+    </div>
+    <div class="admin-stat-card accent-emerald fade-in-up">
+        <div class="num">{{ stats.students }}</div>
+        <div class="label">Students</div>
+    </div>
+    <div class="admin-stat-card accent-coral fade-in-up">
+        <div class="num">{{ stats.jobs }}</div>
+        <div class="label">Jobs Posted</div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="row g-4 mb-5">
+    {% for feature in features %}
+    <div class="col-md-4 fade-in-up">
+        <h5>{{ feature.icon }} {{ feature.title }}</h5>
+        <p class="text-muted">{{ feature.description }}</p>
+    </div>
+    {% empty %}
+    <div class="col-md-4 fade-in-up">
+        <h5>✨ AI-assisted, start to finish</h5>
+        <p class="text-muted">From drafting a job post to matching the right applicant, AI helps at every step.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<hr class="divider">
+
+<div class="row align-items-center g-4">
+    <div class="col-md-8 fade-in-up">
+        <h3 class="section-title">{{ site_settings.about_college_heading }}</h3>
+        <p class="text-muted">{{ site_settings.about_college_text }}</p>
+    </div>
+    <div class="col-md-4 text-md-end fade-in-up">
+        <a href="{% url 'accounts:signup' %}" class="btn btn-primary-jla">Join {{ site_settings.site_name }}</a>
+    </div>
+</div>
+
+{% endblock %}

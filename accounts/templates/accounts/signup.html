@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sign up — {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<div class="auth-shell fade-in-up is-visible">
+    <div class="auth-panel-visual">
+        <div class="auth-brand">{{ site_settings.name_prefix }}{% if site_settings.name_prefix %} {% endif %}<span class="dot">{{ site_settings.name_last_word }}</span></div>
+        <img src="{% static 'img/auth-illustration.svg' %}" alt="">
+        <div class="auth-highlights" id="auth-rotator">
+            <div class="auth-highlight is-active">
+                <span class="tag">✨ AI Drafting</span>
+                <p>Owners can turn a one-line idea into a full job post with AI.</p>
+            </div>
+            <div class="auth-highlight">
+                <span class="tag">🎯 Smart Matches</span>
+                <p>Students get a ranked, explained list of the jobs that fit them best.</p>
+            </div>
+            <div class="auth-highlight">
+                <span class="tag">⭐ Trusted Reviews</span>
+                <p>Owners and students rate each other after every completed job.</p>
+            </div>
+        </div>
+    </div>
+    <div class="auth-panel-form">
+        <h2>Create your account</h2>
+        <p class="auth-sub">It only takes a minute to get started.</p>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-bold">I am a...</label>
+                <div class="role-toggle">
+                    {% for radio in form.role %}
+                        {{ radio.tag }}
+                        <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% for field in form %}
+                {% if field.name != 'role' %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {% if 'password' in field.name %}
+                        <div class="password-field-wrap">
+                            {{ field }}
+                            <button type="button" class="toggle-password" data-target="{{ field.id_for_label }}">Show</button>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <button class="btn btn-primary-jla w-100 mt-2" type="submit">Sign up</button>
+        </form>
+        <p class="mt-3 text-center">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.role-toggle input').forEach(function (input) {
+        var label = document.querySelector('label[for="' + input.id + '"]');
+        function sync() { label.classList.toggle('is-checked', input.checked); }
+        input.addEventListener('change', function () {
+            document.querySelectorAll('.role-toggle label').forEach(function (l) { l.classList.remove('is-checked'); });
+            sync();
+        });
+        sync();
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h2 class="section-title">Student Dashboard</h2>
+
+<h4 class="mb-3">Recommended for you <span class="pill pill-open">✨ AI-matched</span></h4>
+<div class="row g-3 mb-5">
+    {% for job in recommended %}
+    <div class="col-md-4 fade-in-up">
+        <div class="card job-card">
+            <div class="card-body position-relative">
+                <span class="badge badge-score float-end">{{ job.ai_score|floatformat:0 }}%</span>
+                <h5 class="card-title">{{ job.title }}</h5>
+                <p class="text-muted mb-1">{{ job.location }} &middot; ₹{{ job.pay_rate }} ({{ job.get_pay_type_display }})</p>
+                {% if job.ai_reason %}<div class="ai-reason">✨ {{ job.ai_reason }}</div>{% endif %}
+                {% include "jobs/_business_badge.html" %}
+                <a href="{% url 'jobs:job_detail' job.pk %}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">Complete your profile to get personalized recommendations.</p>
+    {% endfor %}
+</div>
+
+<h4 class="mb-3">Your Applications</h4>
+<div class="table-responsive">
+    <table class="table table-hover bg-white">
+        <thead><tr><th>Job</th><th>Owner</th><th>Status</th><th>Applied</th></tr></thead>
+        <tbody>
+        {% for app in applications %}
+            <tr>
+                <td><a href="{% url 'jobs:job_detail' app.job.pk %}">{{ app.job.title }}</a></td>
+                <td>{{ app.job.owner.owner_profile.business_name }}</td>
+                <td><span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                <td>{{ app.applied_at|date:"M d, Y" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4" class="text-muted">No applications yet — go browse some jobs!</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

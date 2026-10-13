@@ -1,0 +1,19 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}Site Settings{% endblock %}
+{% block page_title %}Site Settings{% endblock %}
+{% block admin_content %}
+<div class="admin-panel" style="max-width:680px;">
+    <p class="text-muted small mb-4">These control the site name, footer text, and About page copy shown across the whole site — no code changes needed.</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

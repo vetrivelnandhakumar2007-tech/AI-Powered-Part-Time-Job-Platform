@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit Job{% else %}Post a Job{% endif %}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-7">
+    <h2 class="section-title">{% if editing %}Edit Job{% else %}Post a Job{% endif %}</h2>
+
+    {% if not editing %}
+    <div class="ai-box">
+        <h6><span class="spark">✨</span> AI Draft Assistant</h6>
+        <p class="small text-muted mb-2">Type a rough idea and AI will draft the listing for you below.</p>
+        <form method="post" class="form-spacious">
+            {% csrf_token %}
+            {{ ai_form.raw_idea }}
+            <button type="submit" name="draft" class="btn btn-primary-jla btn-sm mt-2">Generate Draft</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-spacious">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">{% if editing %}Save Changes{% else %}Post Job{% endif %}</button>
+    </form>
+</div>
+</div>
+{% endblock %}

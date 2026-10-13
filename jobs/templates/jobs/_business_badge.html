@@ -1,0 +1,9 @@
+{% with owner=job.owner %}
+<div class="biz-badge">
+    <div class="biz-avatar">{{ owner.owner_profile.business_name|default:owner.username|slice:":1"|upper }}</div>
+    <div>
+        <div class="biz-name">{{ owner.owner_profile.business_name|default:owner.username }}</div>
+        {% if owner.owner_profile.about %}<div class="biz-about">{{ owner.owner_profile.about|truncatechars:70 }}</div>{% endif %}
+    </div>
+</div>
+{% endwith %}

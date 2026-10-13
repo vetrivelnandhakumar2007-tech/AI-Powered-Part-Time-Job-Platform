@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Leave a Review{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-6">
+    <h2 class="section-title">Review {{ to_user.get_full_name|default:to_user.username }}</h2>
+    <p class="text-muted">For: {{ job.title }}</p>
+    <form method="post" class="form-spacious">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">{{ form.rating.label }}</label>
+            <div class="star-rating">{{ form.rating }}</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.comment.label }}</label>
+            {{ form.comment }}
+        </div>
+        <button class="btn btn-primary-jla" type="submit">Submit Review</button>
+    </form>
+</div>
+</div>
+{% endblock %}

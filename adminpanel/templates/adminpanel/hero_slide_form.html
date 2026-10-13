@@ -1,0 +1,24 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}{% if obj %}Edit{% else %}New{% endif %} Hero Slide{% endblock %}
+{% block page_title %}{% if obj %}Edit Hero Slide{% else %}New Hero Slide{% endif %}{% endblock %}
+{% block admin_content %}
+<div class="admin-panel" style="max-width:600px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+            {% if field.field.widget.input_type == 'checkbox' %}
+                {{ field }} <label class="form-check-label">{{ field.label }}</label>
+            {% else %}
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        {% if obj and obj.image %}<p class="small text-muted">Current image: <a href="{{ obj.image.url }}" target="_blank">view</a></p>{% endif %}
+        <button class="btn btn-primary-jla" type="submit">Save</button>
+        <a href="{% url 'adminpanel:hero_slide_list' %}" class="btn btn-ghost-jla">Cancel</a>
+    </form>
+</div>
+{% endblock %}

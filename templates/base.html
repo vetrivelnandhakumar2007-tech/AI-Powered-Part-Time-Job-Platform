@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_settings.site_name }}{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="{% if request.resolver_match.url_name == 'login' %}login-page{% endif %}">
+    {% if request.resolver_match.url_name != 'login' %}
+    <nav class="navbar navbar-expand-lg navbar-jla">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:home' %}">{{ site_settings.name_prefix }}{% if site_settings.name_prefix %} {% endif %}<span class="dot">{{ site_settings.name_last_word }}</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" style="border-color:#4A4E74;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'jobs:job_list' %}">Browse Jobs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">About</a></li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_owner %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'jobs:job_create' %}">Post a Job</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'jobs:my_jobs' %}">My Jobs</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'applications:my_applications' %}">My Applications</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'core:dashboard_redirect' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:edit_profile' %}">Profile</a></li>
+                        {% if user.is_staff %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'adminpanel:dashboard' %}" style="color:var(--amber) !important;">Admin Panel</a></li>
+                        {% endif %}
+                        <li class="nav-item ms-lg-2">
+                            <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-logout btn-sm" type="submit">Log out</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+                        <li class="nav-item ms-lg-2"><a class="btn btn-signup btn-sm" href="{% url 'accounts:signup' %}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="{% if request.resolver_match.url_name == 'login' %}login-page-container{% else %}container page-container{% endif %}">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+
+    {% if request.resolver_match.url_name != 'login' %}
+        {% include "_footer.html" %}
+        {% include "_chatbot.html" %}
+    {% endif %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

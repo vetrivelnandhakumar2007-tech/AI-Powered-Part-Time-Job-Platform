@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} — {{ site_settings.site_name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="admin-shell">
+    <aside class="admin-sidebar" id="adminSidebar">
+        <a href="{% url 'adminpanel:dashboard' %}" class="admin-brand">{{ site_settings.name_prefix }}{% if site_settings.name_prefix %} {% endif %}<span class="dot">{{ site_settings.name_last_word }}</span></a>
+        <span class="admin-sub">Admin Control Panel</span>
+
+        <ul class="admin-nav">
+            <li><a href="{% url 'adminpanel:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"><span class="nav-icon">&#9635;</span> Dashboard</a></li>
+            <li><a href="{% url 'adminpanel:user_list' %}" class="{% if 'user' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#128100;</span> Users</a></li>
+            <li><a href="{% url 'adminpanel:job_list' %}" class="{% if 'job' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#128188;</span> Jobs</a></li>
+            <li><a href="{% url 'adminpanel:application_list' %}" class="{% if 'application' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#128203;</span> Applications</a></li>
+            <li><a href="{% url 'adminpanel:category_list' %}" class="{% if 'category' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#127991;</span> Categories</a></li>
+            <li><a href="{% url 'adminpanel:review_list' %}" class="{% if 'review' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#9733;</span> Reviews</a></li>
+            <li class="admin-divider"></li>
+            <li><span class="admin-sub" style="margin-bottom:0.3rem; padding-left:0.8rem;">Site Content</span></li>
+            <li><a href="{% url 'adminpanel:site_settings_edit' %}" class="{% if request.resolver_match.url_name == 'site_settings_edit' %}is-active{% endif %}"><span class="nav-icon">&#9881;</span> Site Settings</a></li>
+            <li><a href="{% url 'adminpanel:hero_slide_list' %}" class="{% if 'hero_slide' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#127916;</span> Hero Banners</a></li>
+            <li><a href="{% url 'adminpanel:about_feature_list' %}" class="{% if 'about_feature' in request.resolver_match.url_name %}is-active{% endif %}"><span class="nav-icon">&#128221;</span> About Features</a></li>
+            <li class="admin-divider"></li>
+            <li><a href="{% url 'core:home' %}"><span class="nav-icon">&#8592;</span> Back to site</a></li>
+            <li>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="d-flex align-items-center gap-2" style="all:unset; cursor:pointer; width:100%; color:#C7CADF; padding:0.55rem 0.8rem; border-radius:7px; font-size:0.92rem; font-weight:500;">
+                        <span class="nav-icon">&#9211;</span> Log out
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm d-md-none" id="sidebarToggle" style="border:1px solid var(--line);">&#9776;</button>
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+            <div class="text-muted small">Signed in as <strong>{{ request.user.username }}</strong></div>
+        </div>
+        <div class="admin-content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script>
+document.getElementById('sidebarToggle') && document.getElementById('sidebarToggle').addEventListener('click', function () {
+    document.getElementById('adminSidebar').classList.toggle('is-open');
+});
+</script>
+</body>
+</html>

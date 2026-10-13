@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Browse Jobs{% endblock %}
+{% block content %}
+<h2 class="section-title">Browse Jobs</h2>
+<form method="get" class="row g-2 mb-2">
+    <div class="col-md-6">{{ form.q }}</div>
+    <div class="col-md-3">{{ form.category }}</div>
+    <div class="col-md-2">{{ form.location }}</div>
+    <div class="col-md-1"><button class="btn btn-primary-jla w-100" type="submit">Go</button></div>
+</form>
+
+<div class="live-filter-wrap">
+    <input type="text" id="live-filter" class="form-control" placeholder="Quickly filter what's already on this page (title, location, business)...">
+</div>
+
+{% if not query_text and user.is_authenticated and user.is_student %}
+    <p class="ai-reason mb-4">✨ Sorted by AI match to your profile</p>
+{% else %}
+    <div class="mb-4"></div>
+{% endif %}
+
+<p id="live-filter-empty" class="text-muted" style="display:none;">No jobs match that filter.</p>
+
+<div class="row g-3" id="job-grid">
+    {% for job in page_obj %}
+    <div class="col-md-4 job-grid-item fade-in-up" data-search="{{ job.title|lower }} {{ job.location|lower }} {{ job.owner.owner_profile.business_name|default:job.owner.username|lower }}">
+        <div class="card job-card">
+            <div class="card-body position-relative">
+                {% if job.ai_score is not None %}
+                <span class="badge badge-score float-end">{{ job.ai_score|floatformat:0 }}% match</span>
+                {% endif %}
+                <h5 class="card-title">{{ job.title }}</h5>
+                <p class="text-muted mb-1">{{ job.location }} &middot; ₹{{ job.pay_rate }} ({{ job.get_pay_type_display }})</p>
+                {% if job.category %}<span class="pill pill-open">{{ job.category }}</span>{% endif %}
+                <p class="mt-2 small mb-1">{{ job.description|truncatewords:16 }}</p>
+                {% if job.ai_reason %}<div class="ai-reason">✨ {{ job.ai_reason }}</div>{% endif %}
+                {% include "jobs/_business_badge.html" %}
+                <a href="{% url 'jobs:job_detail' job.pk %}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No jobs found. Try a different search.</p>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>{% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>{% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block admin_content %}
+<form method="get" class="admin-filter-bar">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search username or email...">
+    <select name="role" class="form-select">
+        <option value="">All roles</option>
+        <option value="owner" {% if role == 'owner' %}selected{% endif %}>Owners</option>
+        <option value="student" {% if role == 'student' %}selected{% endif %}>Students</option>
+    </select>
+    <button class="btn btn-primary-jla btn-sm" type="submit">Filter</button>
+</form>
+
+<div class="admin-panel">
+    <table class="admin-table">
+        <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Active</th><th>Staff</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td><span class="pill {% if u.role == 'owner' %}pill-open{% else %}pill-accepted{% endif %}">{{ u.get_role_display }}</span></td>
+                <td>{% if u.is_active %}<span class="pill pill-open">Active</span>{% else %}<span class="pill pill-closed">Inactive</span>{% endif %}</td>
+                <td>{% if u.is_staff %}✓{% else %}—{% endif %}</td>
+                <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                <td class="row-actions">
+                    <a href="{% url 'adminpanel:user_edit' u.pk %}" class="admin-btn admin-btn-edit">Edit</a>
+                    <a href="{% url 'adminpanel:user_delete' u.pk %}" class="admin-btn admin-btn-delete">Delete</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="text-muted">No users found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

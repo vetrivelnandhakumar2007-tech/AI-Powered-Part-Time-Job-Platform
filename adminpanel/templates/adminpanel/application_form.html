@@ -1,0 +1,19 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}Edit Application{% endblock %}
+{% block page_title %}Edit Application{% endblock %}
+{% block admin_content %}
+<div class="admin-panel" style="max-width:560px;">
+    <p class="text-muted small">{{ obj.student.username }} → {{ obj.job.title }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">Save Changes</button>
+        <a href="{% url 'adminpanel:application_list' %}" class="btn btn-ghost-jla">Cancel</a>
+    </form>
+</div>
+{% endblock %}

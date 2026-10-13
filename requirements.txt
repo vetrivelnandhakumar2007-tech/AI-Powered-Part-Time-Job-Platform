@@ -1,0 +1,4 @@
+Django
+anthropic
+python-dotenv
+Pillow

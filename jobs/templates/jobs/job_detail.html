@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+<div class="col-md-8 fade-in-up">
+    <h2>{{ job.title }}</h2>
+    <p class="text-muted">{{ job.location }} &middot; ₹{{ job.pay_rate }} ({{ job.get_pay_type_display }}) &middot; {{ job.openings_remaining }} opening(s) left</p>
+    {% if job.category %}<span class="pill pill-open mb-3 d-inline-block">{{ job.category }}</span>{% endif %}
+    <p>{{ job.description|linebreaks }}</p>
+    {% if job.required_skills %}<p><strong>Required skills:</strong> {{ job.required_skills }}</p>{% endif %}
+    {% if job.deadline %}<p><strong>Apply by:</strong> {{ job.deadline }}</p>{% endif %}
+
+    <div class="mt-4">
+    {% if user.is_authenticated and user.is_student %}
+        {% if already_applied %}
+            <div class="alert alert-info">You've already applied to this job.</div>
+        {% elif job.is_open %}
+            <a href="{% url 'applications:apply_to_job' job.pk %}" class="btn btn-primary-jla">Apply Now</a>
+        {% else %}
+            <div class="alert alert-warning">This job is closed.</div>
+        {% endif %}
+    {% elif user.is_authenticated and user == job.owner %}
+        <a href="{% url 'jobs:job_edit' job.pk %}" class="btn btn-ghost-jla">Edit</a>
+        <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-emerald-jla">View Applicants</a>
+        {% if job.is_open %}
+        <a href="{% url 'jobs:job_close' job.pk %}" class="btn btn-ghost-jla" style="border-color:#E2603F;color:#E2603F;">Close Job</a>
+        {% endif %}
+    {% elif not user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary-jla">Log in to apply</a>
+    {% endif %}
+    </div>
+</div>
+
+<div class="col-md-4 fade-in-up">
+    <div class="biz-panel">
+        {% with owner=job.owner %}
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="biz-avatar">{{ owner.owner_profile.business_name|default:owner.username|slice:":1"|upper }}</div>
+            <div>
+                <div class="biz-name">{{ owner.owner_profile.business_name|default:owner.username }}</div>
+                {% if owner.owner_profile.location %}<div class="biz-about">{{ owner.owner_profile.location }}</div>{% endif %}
+            </div>
+        </div>
+        {% if owner.owner_profile.about %}<p class="small text-muted mb-2">{{ owner.owner_profile.about }}</p>{% endif %}
+        {% if owner.owner_profile.contact_info %}<p class="small mb-0"><strong>Contact:</strong> {{ owner.owner_profile.contact_info }}</p>{% endif %}
+        {% endwith %}
+    </div>
+</div>
+</div>
+{% endblock %}

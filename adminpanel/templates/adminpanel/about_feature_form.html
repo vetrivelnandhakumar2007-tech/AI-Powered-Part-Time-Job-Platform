@@ -1,0 +1,23 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}{% if obj %}Edit{% else %}New{% endif %} Feature{% endblock %}
+{% block page_title %}{% if obj %}Edit Feature{% else %}New Feature{% endif %}{% endblock %}
+{% block admin_content %}
+<div class="admin-panel" style="max-width:560px;">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+            {% if field.field.widget.input_type == 'checkbox' %}
+                {{ field }} <label class="form-check-label">{{ field.label }}</label>
+            {% else %}
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">Save</button>
+        <a href="{% url 'adminpanel:about_feature_list' %}" class="btn btn-ghost-jla">Cancel</a>
+    </form>
+</div>
+{% endblock %}

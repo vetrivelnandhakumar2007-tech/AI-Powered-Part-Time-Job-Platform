@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Business Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-6">
+    <h2 class="section-title">Your Business Profile</h2>
+
+    <div class="ai-box">
+        <h6><span class="spark">✨</span> AI Blurb Assistant</h6>
+        <p class="small text-muted mb-2">Give a few notes about your business and AI will write a short, friendly "about" blurb students will see on your job posts.</p>
+        <form method="post" class="form-spacious">
+            {% csrf_token %}
+            {{ ai_form.notes }}
+            <button type="submit" name="draft" class="btn btn-primary-jla btn-sm mt-2">Generate Blurb</button>
+        </form>
+    </div>
+
+    <form method="post" class="form-spacious">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary-jla" type="submit">Save Profile</button>
+    </form>
+</div>
+</div>
+{% endblock %}

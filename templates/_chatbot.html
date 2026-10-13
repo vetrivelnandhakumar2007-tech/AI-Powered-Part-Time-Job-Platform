@@ -1,0 +1,31 @@
+<div id="chatbot-widget">
+    <form id="chatbot-csrf-form" style="display:none;">{% csrf_token %}</form>
+
+    <button id="chatbot-toggle" type="button" aria-label="Open help chat">
+        <span class="chatbot-toggle-icon">💬</span>
+    </button>
+
+    <div id="chatbot-panel" class="chatbot-panel">
+        <div class="chatbot-header">
+            <div>
+                <div class="chatbot-title">{{ site_settings.name_last_word }} Assistant</div>
+                <div class="chatbot-subtitle">Ask about posting, applying, or matching</div>
+            </div>
+            <button type="button" id="chatbot-close" aria-label="Close chat">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="chatbot-msg chatbot-msg-bot">
+                Hi! I'm here to help with {{ site_settings.site_name }} — ask me how to post a job, apply, or how AI matching works.
+            </div>
+        </div>
+        <div class="chatbot-quick-replies" id="chatbot-quick-replies">
+            <button type="button" class="chatbot-chip">How do I post a job?</button>
+            <button type="button" class="chatbot-chip">How does AI matching work?</button>
+            <button type="button" class="chatbot-chip">How do I apply?</button>
+        </div>
+        <form id="chatbot-form" class="chatbot-input-row">
+            <input type="text" id="chatbot-input" placeholder="Type your question..." autocomplete="off" maxlength="500">
+            <button type="submit" id="chatbot-send">Send</button>
+        </form>
+    </div>
+</div>

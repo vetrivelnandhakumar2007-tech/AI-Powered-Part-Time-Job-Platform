@@ -1,0 +1,32 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}Hero Banners{% endblock %}
+{% block page_title %}Hero Banners{% endblock %}
+{% block admin_content %}
+<p class="text-muted small mb-3">These control the rotating banner slides on the home page. Drag order using the number field; toggle "Active" to show/hide a slide without deleting it.</p>
+<div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'adminpanel:hero_slide_create' %}" class="btn btn-primary-jla btn-sm">+ New Slide</a>
+</div>
+<div class="admin-panel">
+    <table class="admin-table">
+        <thead><tr><th>Order</th><th>Eyebrow</th><th>Title</th><th>Theme</th><th>Image</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for slide in slides %}
+            <tr>
+                <td>{{ slide.order }}</td>
+                <td>{{ slide.eyebrow }}</td>
+                <td>{{ slide.title }}</td>
+                <td><span class="pill pill-open">{{ slide.get_theme_display }}</span></td>
+                <td>{% if slide.image %}Custom{% else %}Default{% endif %}</td>
+                <td>{% if slide.is_active %}✓{% else %}—{% endif %}</td>
+                <td class="row-actions">
+                    <a href="{% url 'adminpanel:hero_slide_edit' slide.pk %}" class="admin-btn admin-btn-edit">Edit</a>
+                    <a href="{% url 'adminpanel:hero_slide_delete' slide.pk %}" class="admin-btn admin-btn-delete">Delete</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="text-muted">No hero slides yet — the home page will show a default fallback slide.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

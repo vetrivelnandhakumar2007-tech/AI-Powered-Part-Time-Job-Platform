@@ -1,0 +1,97 @@
+{% extends "adminpanel/base_admin.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block admin_content %}
+
+<div class="admin-stat-grid">
+    <div class="admin-stat-card fade-in-up">
+        <div class="num" data-count="{{ stats.total_users }}">0</div>
+        <div class="label">Total Users</div>
+    </div>
+    <div class="admin-stat-card accent-emerald fade-in-up">
+        <div class="num" data-count="{{ stats.total_owners }}">0</div>
+        <div class="label">Owners</div>
+    </div>
+    <div class="admin-stat-card accent-blue fade-in-up">
+        <div class="num" data-count="{{ stats.total_students }}">0</div>
+        <div class="label">Students</div>
+    </div>
+    <div class="admin-stat-card accent-coral fade-in-up">
+        <div class="num" data-count="{{ stats.total_jobs }}">0</div>
+        <div class="label">Total Jobs ({{ stats.open_jobs }} open)</div>
+    </div>
+    <div class="admin-stat-card fade-in-up">
+        <div class="num" data-count="{{ stats.total_applications }}">0</div>
+        <div class="label">Applications ({{ stats.pending_applications }} pending)</div>
+    </div>
+    <div class="admin-stat-card accent-emerald fade-in-up">
+        <div class="num">{% if stats.avg_rating %}{{ stats.avg_rating|floatformat:1 }}{% else %}—{% endif %}</div>
+        <div class="label">Avg Rating ({{ stats.total_reviews }} reviews)</div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="admin-panel">
+            <h5>Jobs by Category</h5>
+            {% for cat in top_categories %}
+            <div class="mini-bar-row">
+                <div class="mini-bar-label">{{ cat.name }}</div>
+                <div class="mini-bar-track"><div class="mini-bar-fill" style="width: {% widthratio cat.job_count max_cat_count 100 %}%;"></div></div>
+                <div class="mini-bar-count">{{ cat.job_count }}</div>
+            </div>
+            {% empty %}
+            <p class="text-muted small">No categories yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="admin-panel">
+            <h5>Recent Jobs</h5>
+            <table class="admin-table">
+                <thead><tr><th>Title</th><th>Owner</th><th>Status</th><th>Posted</th></tr></thead>
+                <tbody>
+                {% for job in recent_jobs %}
+                    <tr>
+                        <td><a href="{% url 'jobs:job_detail' job.pk %}">{{ job.title }}</a></td>
+                        <td>{{ job.owner.username }}</td>
+                        <td><span class="pill {% if job.status == 'open' %}pill-open{% else %}pill-closed{% endif %}">{{ job.get_status_display }}</span></td>
+                        <td>{{ job.created_at|date:"M d" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4" class="text-muted">No jobs yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="admin-panel">
+            <h5>Recent Applications</h5>
+            {% for app in recent_applications %}
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom:1px solid var(--line);">
+                <div>
+                    <div class="fw-semibold small">{{ app.student.username }}</div>
+                    <div class="text-muted" style="font-size:0.8rem;">{{ app.job.title }}</div>
+                </div>
+                <span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span>
+            </div>
+            {% empty %}
+            <p class="text-muted small">No applications yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="admin-panel">
+            <h5>Recently Joined</h5>
+            {% for u in recent_users %}
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2" style="border-bottom:1px solid var(--line);">
+                <div class="small fw-semibold">{{ u.username }}</div>
+                <span class="pill {% if u.role == 'owner' %}pill-open{% else %}pill-accepted{% endif %}">{{ u.get_role_display }}</span>
+            </div>
+            {% empty %}
+            <p class="text-muted small">No users yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

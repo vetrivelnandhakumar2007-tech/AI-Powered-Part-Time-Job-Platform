@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+<h2 class="section-title">My Applications</h2>
+<div class="table-responsive">
+<table class="table table-hover bg-white">
+    <thead><tr><th>Job</th><th>Location</th><th>Status</th><th>Match Score</th><th>Applied</th></tr></thead>
+    <tbody>
+    {% for app in applications %}
+        <tr>
+            <td><a href="{% url 'jobs:job_detail' app.job.pk %}">{{ app.job.title }}</a></td>
+            <td>{{ app.job.location }}</td>
+            <td><span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span></td>
+            <td>{% if app.ai_match_score %}{{ app.ai_match_score|floatformat:0 }}%{% else %}—{% endif %}</td>
+            <td>{{ app.applied_at|date:"M d, Y" }}</td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="5" class="text-muted">No applications yet.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

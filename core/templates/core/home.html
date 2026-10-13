@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ site_settings.site_name }} — {{ site_settings.tagline }}{% endblock %}
+{% block content %}
+
+<div class="hero-banner" id="hero">
+    {% if hero_slides %}
+        {% for slide in hero_slides %}
+        <div class="hero-slide {% if forloop.first %}is-active{% endif %}" data-theme="{{ slide.theme }}">
+            <div class="hero-slide-inner">
+                <div class="hero-text">
+                    <div class="hero-eyebrow">{{ slide.eyebrow }}</div>
+                    <h1>{{ slide.title }}</h1>
+                    <p>{{ slide.subtitle }}</p>
+                    <a href="{% url 'accounts:signup' %}" class="btn btn-primary-jla">Get started</a>
+                    <a href="{% url 'jobs:job_list' %}" class="btn btn-ghost-jla ms-2" style="border-color:#fff;color:#fff;">Browse jobs</a>
+                </div>
+                {% if slide.image %}
+                    <img src="{{ slide.image.url }}" alt="" class="hero-image">
+                {% else %}
+                    <img src="{% static slide.default_image_url %}" alt="" class="hero-image">
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        {# Safety fallback so the home page is never blank, even with no slides configured. #}
+        <div class="hero-slide is-active" data-theme="retail">
+            <div class="hero-slide-inner">
+                <div class="hero-text">
+                    <div class="hero-eyebrow">Welcome</div>
+                    <h1>{{ site_settings.tagline }}</h1>
+                    <p>Owners post part-time work, students apply, AI makes the match.</p>
+                    <a href="{% url 'accounts:signup' %}" class="btn btn-primary-jla">Get started</a>
+                    <a href="{% url 'jobs:job_list' %}" class="btn btn-ghost-jla ms-2" style="border-color:#fff;color:#fff;">Browse jobs</a>
+                </div>
+                <img src="{% static 'img/hero-retail.svg' %}" alt="" class="hero-image">
+            </div>
+        </div>
+    {% endif %}
+    <div class="hero-dots" id="hero-dots"></div>
+</div>
+
+<div class="cat-strip fade-in-up">
+    <span class="cat-chip"><span class="dot" style="background:#F2A93B"></span>Retail & Shop Help</span>
+    <span class="cat-chip"><span class="dot" style="background:#1E8F6F"></span>Tutoring</span>
+    <span class="cat-chip"><span class="dot" style="background:#E2603F"></span>Event Support</span>
+    <span class="cat-chip"><span class="dot" style="background:#5A8CDC"></span>Delivery</span>
+    <span class="cat-chip"><span class="dot" style="background:#8A6FD6"></span>Data Entry</span>
+    <span class="cat-chip"><span class="dot" style="background:#C9963F"></span>Cafe & Restaurant</span>
+</div>
+
+<div class="row mb-5 fade-in-up">
+    <div class="col-md-5">
+        <h2 class="section-title">How it works</h2>
+    </div>
+    <div class="col-md-7">
+        <div class="step-row">
+            <div class="step-num">1</div>
+            <div><h5>Set up your profile</h5><p class="text-muted mb-0">Owners describe their business; students list skills and availability.</p></div>
+        </div>
+        <div class="step-row">
+            <div class="step-num">2</div>
+            <div><h5>Post or browse</h5><p class="text-muted mb-0">AI drafts job posts from a rough idea and ranks jobs by fit for each student.</p></div>
+        </div>
+        <div class="step-row">
+            <div class="step-num">3</div>
+            <div><h5>Apply, hire, review</h5><p class="text-muted mb-0">Owners see AI-summarized applicants; both sides rate each other once the job's done.</p></div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title mb-0">Recently posted</h2>
+    <a href="{% url 'jobs:job_list' %}" class="text-decoration-none fw-semibold">See all &rarr;</a>
+</div>
+<div class="row g-3">
+    {% for job in recent_jobs %}
+    <div class="col-md-4 fade-in-up">
+        <div class="card job-card">
+            <div class="card-body position-relative">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <p class="text-muted mb-1">{{ job.location }} &middot; ₹{{ job.pay_rate }} ({{ job.get_pay_type_display }})</p>
+                {% include "jobs/_business_badge.html" %}
+                <a href="{% url 'jobs:job_detail' job.pk %}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No jobs posted yet — be the first!</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var slides = document.querySelectorAll('#hero .hero-slide');
+    var dotsWrap = document.getElementById('hero-dots');
+    if (!slides.length) return;
+    var current = 0;
+
+    slides.forEach(function (_, i) {
+        var b = document.createElement('button');
+        if (i === 0) b.className = 'is-active';
+        b.addEventListener('click', function () { show(i); restart(); });
+        dotsWrap.appendChild(b);
+    });
+
+    function show(i) {
+        slides[current].classList.remove('is-active');
+        if (dotsWrap.children[current]) dotsWrap.children[current].classList.remove('is-active');
+        current = i;
+        slides[current].classList.add('is-active');
+        if (dotsWrap.children[current]) dotsWrap.children[current].classList.add('is-active');
+    }
+
+    var timer;
+    function restart() {
+        clearInterval(timer);
+        if (slides.length < 2) return;
+        timer = setInterval(function () { show((current + 1) % slides.length); }, 4500);
+    }
+    restart();
+})();
+</script>
+{% endblock %}

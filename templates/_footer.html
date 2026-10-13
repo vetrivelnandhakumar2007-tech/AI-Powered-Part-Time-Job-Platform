@@ -1,0 +1,48 @@
+<footer class="site-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="footer-brand">{{ site_settings.name_prefix }}{% if site_settings.name_prefix %} {% endif %}<span class="dot">{{ site_settings.name_last_word }}</span></div>
+                <p>{{ site_settings.footer_about_text }}</p>
+                {% if site_settings.support_email %}<p class="mb-0">✉️ {{ site_settings.support_email }}</p>{% endif %}
+                {% if site_settings.support_phone %}<p>📞 {{ site_settings.support_phone }}</p>{% endif %}
+            </div>
+            <div class="col-6 col-md-2">
+                <h6>Explore</h6>
+                <a href="{% url 'jobs:job_list' %}">Browse Jobs</a>
+                <a href="{% url 'accounts:signup' %}">Sign up</a>
+                <a href="{% url 'accounts:login' %}">Log in</a>
+            </div>
+            <div class="col-6 col-md-2">
+                <h6>For Owners</h6>
+                {% if user.is_authenticated and user.is_owner %}
+                <a href="{% url 'jobs:job_create' %}">Post a Job</a>
+                <a href="{% url 'jobs:my_jobs' %}">My Jobs</a>
+                {% else %}
+                <a href="{% url 'accounts:signup' %}">Post a Job</a>
+                <a href="{% url 'accounts:signup' %}">Manage Applicants</a>
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-2">
+                <h6>For Students</h6>
+                {% if user.is_authenticated and user.is_student %}
+                <a href="{% url 'jobs:job_list' %}">Find Jobs</a>
+                <a href="{% url 'applications:my_applications' %}">My Applications</a>
+                {% else %}
+                <a href="{% url 'accounts:signup' %}">Find Jobs</a>
+                <a href="{% url 'accounts:signup' %}">Track Applications</a>
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-2">
+                <h6>Categories</h6>
+                <span><span class="footer-cat-dot" style="background:#F2A93B"></span>Retail</span>
+                <span><span class="footer-cat-dot" style="background:#1E8F6F"></span>Tutoring</span>
+                <span><span class="footer-cat-dot" style="background:#E2603F"></span>Events</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; {% now "Y" %} {{ site_settings.site_name }} &middot; Built for students and local businesses</span>
+            <span>Sacred Heart College (Autonomous), Tirupattur</span>
+        </div>
+    </div>
+</footer>

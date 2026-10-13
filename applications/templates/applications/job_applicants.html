@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Applicants — {{ job.title }}{% endblock %}
+{% block content %}
+<h2 class="mb-1">Applicants for {{ job.title }}</h2>
+<p class="text-muted mb-4">Ranked by AI match score</p>
+
+{% for app in applicants %}
+<div class="card job-card mb-3 fade-in-up">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h5 class="mb-1">{{ app.student.get_full_name|default:app.student.username }}</h5>
+                <p class="text-muted small mb-2">
+                    {{ app.student.student_profile.college }}
+                    {% if app.student.student_profile.year_of_study %} &middot; {{ app.student.student_profile.year_of_study }}{% endif %}
+                </p>
+            </div>
+            {% if app.ai_match_score %}
+            <span class="badge badge-score badge-score">{{ app.ai_match_score|floatformat:0 }}% match</span>
+            {% endif %}
+        </div>
+        {% if app.ai_summary %}
+        <div class="ai-summary mb-2">✨ {{ app.ai_summary }}</div>
+        {% endif %}
+        {% if app.message %}<p class="mb-2 mt-2"><strong>Note:</strong> {{ app.message }}</p>{% endif %}
+        <span class="pill pill-{{ app.status }} mb-2 d-inline-block mt-2">{{ app.get_status_display }}</span>
+        <div class="mt-2">
+            {% if app.status == 'pending' %}
+                <a href="{% url 'applications:update_status' app.pk 'accepted' %}" class="btn btn-sm btn-emerald-jla">Accept</a>
+                <a href="{% url 'applications:update_status' app.pk 'rejected' %}" class="btn btn-sm btn-ghost-jla" style="border-color:#E2603F;color:#E2603F;">Reject</a>
+            {% elif app.status == 'accepted' %}
+                <a href="{% url 'applications:update_status' app.pk 'completed' %}" class="btn btn-sm btn-primary-jla">Mark Completed</a>
+                <a href="{% url 'reviews:leave_review' job.pk app.student.pk %}" class="btn btn-sm btn-ghost-jla">Leave Review</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% empty %}
+<p class="text-muted">No applicants yet.</p>
+{% endfor %}
+{% endblock %}
