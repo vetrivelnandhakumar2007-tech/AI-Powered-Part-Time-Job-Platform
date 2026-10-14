@@ -29,14 +29,7 @@ DEBUG = True
 # Allow common local development hosts and any additional hosts supplied through
 # the ALLOWED_HOSTS environment variable (for example: LAN IPs used while testing
 # on the same network).
-DEFAULT_ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-    '0.0.0.0',
-    '10.222.243.41',
-    'Ai-jobs-platform.onrender.com',
-]
+DEFAULT_ALLOWED_HOSTS = ['*']
 
 env_allowed_hosts = os.environ.get('ALLOWED_HOSTS', '')
 if env_allowed_hosts:
